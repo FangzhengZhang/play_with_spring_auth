@@ -1,4 +1,4 @@
-package cat.frank.PlayWithAuthJWT;
+package cat.frank.playWithAuthJWT;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

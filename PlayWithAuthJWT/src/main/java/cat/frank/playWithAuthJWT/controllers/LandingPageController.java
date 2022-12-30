@@ -1,4 +1,4 @@
-package cat.frank.PlayWithAuthJWT.Controllers;
+package cat.frank.playWithAuthJWT.controllers;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class LandingPageController {
 
-    @GetMapping("/")
+    @GetMapping("/test")
     public String testRequest(){
         return "Hello Page";
     }

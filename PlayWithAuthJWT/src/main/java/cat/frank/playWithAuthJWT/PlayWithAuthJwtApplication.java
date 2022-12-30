@@ -1,4 +1,4 @@
-package cat.frank.PlayWithAuthJWT;
+package cat.frank.playWithAuthJWT;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
