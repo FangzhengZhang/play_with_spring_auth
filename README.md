@@ -26,3 +26,10 @@ This project is created for me to play with spring-boot-starter-security and jjw
    able to register their account.
 6. Add login function in the controller. This function will use authenticationManager to create auth token.
    and then send it back to the success login user's browser. 
+7. Inorder to use JWT, we need to add AuthenticationEntryPoint to our configuration and disable sessions 
+   in SecurityConfig class. 
+8. Create JWTGenerator class to set and parse our token.
+9. Create JWTAuthenticationFilter class to apply filter actions on the request, and set the token to response. 
+   In SecurityConfig class, add the JWTAuthenticationFilter 
+10. In the controller, return AuthResponseToken when login successful
+   

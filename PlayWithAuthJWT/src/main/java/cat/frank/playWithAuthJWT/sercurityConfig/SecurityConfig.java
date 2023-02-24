@@ -4,35 +4,41 @@ import cat.frank.playWithAuthJWT.service.CustomUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import javax.management.MXBean;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
 
+    private JwtAuthEntryPoint jwtAuthEntryPoint;
     private CustomUserDetailsService userDetailsService;
     @Autowired
-    public SecurityConfig(CustomUserDetailsService userDetailsService) {
+    public SecurityConfig(CustomUserDetailsService userDetailsService, JwtAuthEntryPoint jwtAuthEntryPoint) {
         this.userDetailsService = userDetailsService;
+        this.jwtAuthEntryPoint = jwtAuthEntryPoint;
     }
 
     //https://spring.io/blog/2022/02/21/spring-security-without-the-websecurityconfigureradapter
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        // add the jwtAuthEntryPoint to the filter chain
+        http
+                .exceptionHandling()
+                .authenticationEntryPoint(jwtAuthEntryPoint)
+                .and()
+                // Since we bring in JWT,so we need to disable session
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+
         http.authorizeHttpRequests(authorize -> {
                     try {
                         authorize
@@ -47,19 +53,11 @@ public class SecurityConfig {
                         throw new RuntimeException(e);
                     }
                 }
-
-//                    try {
-//                        authorize
-//                                //.requestMatchers("/test/**", "/signup", "/about").permitAll()
-//                                .requestMatchers("/api/auth/**").permitAll()
-//                                .anyRequest().authenticated()
-//                                .and()
-//                                .httpBasic();
-//                    } catch (Exception e) {
-//                        throw new RuntimeException(e);
-//                    }
-
         );
+
+        // Apply jwtAuthenticationFilter that we created here
+        http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
+
         return http.build();
 
     }
@@ -100,5 +98,10 @@ public class SecurityConfig {
     @Bean
     PasswordEncoder passwordEncoder(){
         return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    public JWTAuthenticationFilter jwtAuthenticationFilter(){
+        return new JWTAuthenticationFilter();
     }
 }

@@ -1,11 +1,13 @@
 package cat.frank.playWithAuthJWT.controllers;
 
+import cat.frank.playWithAuthJWT.dto.AuthResponseDTO;
 import cat.frank.playWithAuthJWT.dto.LoginDto;
 import cat.frank.playWithAuthJWT.model.Role;
 import cat.frank.playWithAuthJWT.model.UserEntity;
 import cat.frank.playWithAuthJWT.repository.RoleRepository;
 import cat.frank.playWithAuthJWT.repository.UserRepository;
 import cat.frank.playWithAuthJWT.dto.RegisterDto;
+import cat.frank.playWithAuthJWT.sercurityConfig.JWTGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,16 +30,19 @@ public class LandingPageController {
     private UserRepository userRepository;
     private RoleRepository roleRepository;
     private PasswordEncoder passwordEncoder;
+    private JWTGenerator jwtGenerator;
 
     @Autowired
     public LandingPageController(AuthenticationManager authenticationManager,
                                  UserRepository userRepository,
                                  RoleRepository roleRepository,
-                                 PasswordEncoder passwordEncoder){
+                                 PasswordEncoder passwordEncoder,
+                                 JWTGenerator jwtGenerator){
         this.authenticationManager = authenticationManager;
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.passwordEncoder = passwordEncoder;
+        this.jwtGenerator = jwtGenerator;
     }
 
     @GetMapping("/test")
@@ -72,11 +77,12 @@ public class LandingPageController {
     }
 
     @PostMapping("login")
-    public ResponseEntity<String> login(@RequestBody LoginDto loginDto){
+    public ResponseEntity<AuthResponseDTO> login(@RequestBody LoginDto loginDto){
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginDto.getUsername(), loginDto.getPassword()));
         // the contextHolder will hold all the authentication information, so user will not need to keep login
         SecurityContextHolder.getContext().setAuthentication(authentication);
-        return new ResponseEntity<>("User signed success!", HttpStatus.OK);
+        String token = jwtGenerator.generateToken(authentication);
+        return new ResponseEntity<>(new AuthResponseDTO(token), HttpStatus.OK);
     }
 }
