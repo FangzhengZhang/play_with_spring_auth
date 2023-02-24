@@ -24,4 +24,5 @@ This project is created for me to play with spring-boot-starter-security and jjw
    own user object. Setup AuthenticationManager and PasswordEncoder in SecurityConfig class too.
 5. Add register() functions in Controller class and permit registration related actions, so users are 
    able to register their account.
-6. 
+6. Add login function in the controller. This function will use authenticationManager to create auth token.
+   and then send it back to the success login user's browser. 

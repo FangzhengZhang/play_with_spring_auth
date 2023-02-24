@@ -1,5 +1,6 @@
 package cat.frank.playWithAuthJWT.controllers;
 
+import cat.frank.playWithAuthJWT.dto.LoginDto;
 import cat.frank.playWithAuthJWT.model.Role;
 import cat.frank.playWithAuthJWT.model.UserEntity;
 import cat.frank.playWithAuthJWT.repository.RoleRepository;
@@ -9,9 +10,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Security;
 import java.util.Collections;
 import java.util.List;
 
@@ -64,5 +69,14 @@ public class LandingPageController {
     public ResponseEntity<List<UserEntity>> checkUserRecords(){
         List<UserEntity> userList =  userRepository.findAll();
         return new ResponseEntity<>(userList, HttpStatus.OK);
+    }
+
+    @PostMapping("login")
+    public ResponseEntity<String> login(@RequestBody LoginDto loginDto){
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(loginDto.getUsername(), loginDto.getPassword()));
+        // the contextHolder will hold all the authentication information, so user will not need to keep login
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        return new ResponseEntity<>("User signed success!", HttpStatus.OK);
     }
 }

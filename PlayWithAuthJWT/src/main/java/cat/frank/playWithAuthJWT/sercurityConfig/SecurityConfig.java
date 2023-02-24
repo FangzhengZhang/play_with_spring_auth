@@ -37,7 +37,9 @@ public class SecurityConfig {
                     try {
                         authorize
                                 .requestMatchers("/api/auth/test/**", "/api/auth/signup/**", "/about").permitAll()
-                                .requestMatchers("/api/auth/register/**", "/api/auth/checkUserRecords/**").permitAll()
+                                .requestMatchers("/api/auth/register/**",
+                                        "/api/auth/checkUserRecords/**",
+                                        "/api/auth/login/**").permitAll()
                                 .anyRequest().denyAll()
                                 .and()
                                 .csrf().disable();
@@ -79,25 +81,6 @@ public class SecurityConfig {
      * }
      */
 
-    /**
-     * Create default admin and user, so in the initial run, we do not need database but still able to use the service.
-     * @return
-     */
-    @Bean
-    public UserDetailsService users(){
-        UserDetails admin = User.builder()
-                .username("admin") // default username
-                .password("password") // default password
-                .roles("ADMIN")
-                .build();
-
-        UserDetails user = User.builder()
-                .username("user") // default username
-                .password("password") // default password
-                .roles("USER")
-                .build();
-        return new InMemoryUserDetailsManager(admin, user);
-    }
 
     /**
      * Setup Authentication manager
