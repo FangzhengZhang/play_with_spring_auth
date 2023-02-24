@@ -36,15 +36,27 @@ public class SecurityConfig {
         http.authorizeHttpRequests(authorize -> {
                     try {
                         authorize
-                                .requestMatchers("/test/**", "/signup", "/about").permitAll()
-                                .requestMatchers(HttpMethod.GET).authenticated()
-                                .anyRequest().authenticated()
+                                .requestMatchers("/api/auth/test/**", "/api/auth/signup/**", "/about").permitAll()
+                                .requestMatchers("/api/auth/register/**", "/api/auth/checkUserRecords/**").permitAll()
+                                .anyRequest().denyAll()
                                 .and()
-                                .httpBasic();
+                                .csrf().disable();
                     } catch (Exception e) {
                         throw new RuntimeException(e);
                     }
                 }
+
+//                    try {
+//                        authorize
+//                                //.requestMatchers("/test/**", "/signup", "/about").permitAll()
+//                                .requestMatchers("/api/auth/**").permitAll()
+//                                .anyRequest().authenticated()
+//                                .and()
+//                                .httpBasic();
+//                    } catch (Exception e) {
+//                        throw new RuntimeException(e);
+//                    }
+
         );
         return http.build();
 

@@ -19,4 +19,9 @@ This project is created for me to play with spring-boot-starter-security and jjw
    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception{}
 3. Create few user information in the configuration files, so in the initial run, we can use
     service without connect to database. (add @Bean to the creation method).
-4. 
+4. Created our CustomUserDetailsService class, and used it in the SecurityConfig class. 
+   CustomUserDetailsService will connect to database and use the information in the database to build our 
+   own user object. Setup AuthenticationManager and PasswordEncoder in SecurityConfig class too.
+5. Add register() functions in Controller class and permit registration related actions, so users are 
+   able to register their account.
+6. 
