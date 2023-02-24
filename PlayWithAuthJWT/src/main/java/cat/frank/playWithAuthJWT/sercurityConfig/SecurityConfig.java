@@ -32,6 +32,8 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         // add the jwtAuthEntryPoint to the filter chain
+        // if the JWT passed, then you do not need user and password
+        // In JWTAuthenticationFilter.java. It obtains JWT from header.
         http
                 .exceptionHandling()
                 .authenticationEntryPoint(jwtAuthEntryPoint)
@@ -44,8 +46,8 @@ public class SecurityConfig {
                         authorize
                                 .requestMatchers("/api/auth/test/**", "/api/auth/signup/**", "/about").permitAll()
                                 .requestMatchers("/api/auth/register/**",
-                                        "/api/auth/checkUserRecords/**",
                                         "/api/auth/login/**").permitAll()
+                                .requestMatchers("/api/auth/checkUserRecords/**").authenticated()
                                 .anyRequest().denyAll()
                                 .and()
                                 .csrf().disable();

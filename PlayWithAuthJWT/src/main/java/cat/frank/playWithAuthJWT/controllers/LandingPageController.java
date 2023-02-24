@@ -9,6 +9,7 @@ import cat.frank.playWithAuthJWT.repository.UserRepository;
 import cat.frank.playWithAuthJWT.dto.RegisterDto;
 import cat.frank.playWithAuthJWT.sercurityConfig.JWTGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -83,6 +84,8 @@ public class LandingPageController {
         // the contextHolder will hold all the authentication information, so user will not need to keep login
         SecurityContextHolder.getContext().setAuthentication(authentication);
         String token = jwtGenerator.generateToken(authentication);
-        return new ResponseEntity<>(new AuthResponseDTO(token), HttpStatus.OK);
+        HttpHeaders responseHeaders = new HttpHeaders();
+        responseHeaders.set("Authorization", "Bearer "+token);
+        return new ResponseEntity<>(new AuthResponseDTO(token), responseHeaders, HttpStatus.OK);
     }
 }
